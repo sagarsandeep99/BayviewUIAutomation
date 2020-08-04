@@ -6,7 +6,7 @@ using OpenQA.Selenium.Support.UI;
 
 namespace BayViewUIAutomation.ActionClasses
 {
-    public class UIActions
+    public class UiActions
     {
         public static void GoToUrl(string url)
         {
@@ -52,20 +52,20 @@ namespace BayViewUIAutomation.ActionClasses
             ObjectRepo.Driver.Manage().Timeouts().ImplicitWait.Seconds.CompareTo(timeoutInSeconds);
         }
 
-        //public static void WebDriverWait(By element, int timeoutInSeconds, string errorMessage)
-        //{
-        //    try
-        //    {
-        //        if (timeoutInSeconds > 0)
-        //            new WebDriverWait(ObjectRepo.Driver, TimeSpan.FromSeconds(timeoutInSeconds))
-        //                .Until(ex element);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Console.WriteLine(e + ": Unable to load " + errorMessage + "element");
-        //        throw;
-        //    }
-        //}
+        public static void WebDriverWait(IWebDriver driver, By element, int timeoutInSeconds, string errorMessage)
+        {
+            try
+            {
+                if (timeoutInSeconds > 0)
+                    new WebDriverWait(driver, TimeSpan.FromSeconds(30))
+                        .Until(SeleniumExtras.WaitHelpers.ExpectedConditions.VisibilityOfAllElementsLocatedBy(element));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e + ": Unable to load " + errorMessage + "element");
+                throw;
+            }
+        }
 
 
         static readonly Actions Actions = new Actions(ObjectRepo.Driver);

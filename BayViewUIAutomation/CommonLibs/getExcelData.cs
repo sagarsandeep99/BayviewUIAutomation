@@ -14,11 +14,11 @@ namespace BayViewUIAutomation.CommonLibs
 
     public class GetExcelData
     {
-        private static string FilePath = "D:\\QA\\VSBayViewUIAutomation\\BayViewUIAutomation\\DataResources\\TestProjectId.xlsx";
+        private static string _filePath = "D:\\QA\\VSBayViewUIAutomation\\BayViewUIAutomation\\DataResources\\TestProjectId.xlsx";
 
-        private static string UploadFilePath = ConfigurationManager.AppSettings["UploadFilePath"];
+        private static string _uploadFilePath = ConfigurationManager.AppSettings["UploadFilePath"];
         public static StringBuilder CsvFile = new StringBuilder();
-        public static StringBuilder cellValue = new StringBuilder();
+        public static StringBuilder CellValue = new StringBuilder();
         public static string CsvFilePath = "D:\\QA\\VSBayViewUIAutomation\\BayViewUIAutomation\\DataResources\\TestProjectIdResult.csv";
 
         //Get Excel sheet all cell values
@@ -63,7 +63,7 @@ namespace BayViewUIAutomation.CommonLibs
         {
             var xApplication = new Excel.Application();
             xApplication.DisplayAlerts = false;
-            var xWorkbook = xApplication.Workbooks.Open(FilePath, Notify: false);
+            var xWorkbook = xApplication.Workbooks.Open(_filePath, Notify: false);
             Excel.Worksheet xWorksheet = xWorkbook.Sheets[sheetName];
             var xRange = xWorksheet.UsedRange;
             var cellValue1 = "";
@@ -101,13 +101,20 @@ namespace BayViewUIAutomation.CommonLibs
             return cellValue;
         }
 
+        public void DeleteFile()
+        {
+            if (File.Exists(CsvFilePath))
+            {
+                File.Delete(CsvFilePath);
+            }
+        }
 
         public void ResultOfProjectId(int rowId, string result, string projectId)
         {
 
-            if (File.Exists(CsvFilePath))
-            {
-                List<string> lines = File.ReadAllLines(CsvFilePath).ToList();
+//if (File.Exists(CsvFilePath))
+ //           {
+  //              List<string> lines = File.ReadAllLines(CsvFilePath).ToList();
 
                 //string result = "Pass";
                 if (result.Equals("Pass"))
@@ -122,6 +129,6 @@ namespace BayViewUIAutomation.CommonLibs
                     File.WriteAllText(CsvFilePath, CsvFile.ToString());
                 }
             }
-        }
+ //       }
     }
 }
