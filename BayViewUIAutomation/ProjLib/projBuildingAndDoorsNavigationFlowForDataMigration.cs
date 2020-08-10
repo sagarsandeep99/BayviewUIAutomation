@@ -15,12 +15,11 @@ namespace BayViewUIAutomation.ProjLib
 {
     public class ProjBuildingAndDoorsNavigationFlowForDataMigration
     {
-        string _result = "";
-        public void ProjBuildingFlow(By modElement)
+        string failedException = "";
+        public string ProjBuildingFlow(By modElement)
         {          
             try
             {                     
-                //By element = By.XPath("//span[text()='Mod 1']/preceding-sibling::i");
                 try
                 {
                     UiActions.WebDriverWait(ObjectRepo.Driver, modElement, 30, "not found");
@@ -31,19 +30,12 @@ namespace BayViewUIAutomation.ProjLib
                     ObjectRepo.Driver.FindElement(modElement).Click();
                 }
 
-
                 Thread.Sleep(5000);
                 ObjectRepo.Driver.FindElement(
                     By.XPath("//form[@name='buildingDimensionsForm']//button[@ng-click='checkAndSave(true)']")).Click();
 
-                Thread.Sleep(3000);
-                try
-                {
-                    ObjectRepo.Driver.FindElement(By.XPath("//button[@ng-click='ok()']")).Click();
-                }
-                catch (Exception)
-                {
-                }
+                Thread.Sleep(6000);
+                ObjectRepo.Driver.FindElement(By.XPath("//button[@ng-click='ok()']")).Click();
 
                 Thread.Sleep(3000);
                 ObjectRepo.Driver.FindElement(By.XPath("//div[@id='roofDetailsContainer']//button[2]")).Click();
@@ -51,39 +43,30 @@ namespace BayViewUIAutomation.ProjLib
                 Thread.Sleep(3000);
                 ObjectRepo.Driver.FindElement(By.XPath("//button[text()='Save for all walls']")).Click();
 
-                Thread.Sleep(3000);
-                try
-                {
-                    ObjectRepo.Driver.FindElement(By.XPath("//button[@ng-click=\"ok()\"]")).Click();
-                }
-                catch (Exception)
-                {
-                }       
-                _result = "Pass";
-
+                Thread.Sleep(6000);
+                ObjectRepo.Driver.FindElement(By.XPath("//button[@ng-click=\"ok()\"]")).Click();
             }
             catch (Exception e)
             {
-                _result = "Fail"+e;
-
+                failedException = "Fail"+e;
+                return failedException;
             }
+            return "Passed";
         }
 
-        public void ProjDoorsFlow()
+        public string ProjDoorsFlow()
         {
             Thread.Sleep(10000);
-            By element = By.XPath("//span[text()=\'Doors\']/preceding-sibling::i");
+          //  By element = By.XPath("//span[text()=\'Doors\']/preceding-sibling::i");
 
-            try
-            {
-                UiActions.WebDriverWait(ObjectRepo.Driver, element, 30, "not found");
-            }
-            catch (NoSuchElementException)
-            {
+            //try
+            //{
+            //    UiActions.WebDriverWait(ObjectRepo.Driver, element, 30, "not found");
+            //}
+            //catch (NoSuchElementException)
+            //{
                 ObjectRepo.Driver.FindElement(By.XPath("//span[text()=\'Doors\']/preceding-sibling::i")).Click();
-            }
-
-
+                    // }
             try
             {
                 Thread.Sleep(10000);
@@ -104,21 +87,16 @@ namespace BayViewUIAutomation.ProjLib
                         Thread.Sleep(30000);
                         ObjectRepo.Driver.FindElement(By.XPath("//button[@ng-click=\'save();\']")).Click();
 
-                        Thread.Sleep(3000);
-                        try
-                        {
-                            ObjectRepo.Driver.FindElement(By.XPath("//button[@ng-click=\"ok()\"]")).Click();
-                        }
-                        catch (Exception)
-                        {
-                        }
+                        Thread.Sleep(6000);
+                        ObjectRepo.Driver.FindElement(By.XPath("//button[@ng-click=\"ok()\"]")).Click();
 
                         Thread.Sleep(10000);
                     }
                 }
                 else
                 {
-                    _result = "No Doors available";
+                    failedException = "No Doors available";
+                    return failedException;
                 }
             }
             catch (NoSuchElementException elementException)
@@ -128,11 +106,13 @@ namespace BayViewUIAutomation.ProjLib
             }
             catch (Exception e)
             {
-                _result = "Fail" + e;
+                failedException = "Fail" + e;
+                return failedException;
             }
+            return "Passed";
         }
 
-        public void ViewReports()
+        public string ViewReports()
         {
             try
             {
@@ -149,15 +129,23 @@ namespace BayViewUIAutomation.ProjLib
                 Thread.Sleep(10000);
                 ObjectRepo.Driver.FindElement(By.XPath("//button[@ng-click='close()']")).Click();
             }
-            catch (ArgumentNullException e)
+            catch (ArgumentNullException elementException)
             {
-                _result = "Fail" + e;
+                Console.WriteLine(elementException);
+                throw;
             }
             catch (NoSuchElementException elementException)
             {
                 Console.WriteLine(elementException);
                 throw;
             }
+            catch (Exception e)
+            {
+                failedException = "Fail" + e;
+                return failedException;
+            }
+
+            return "Passed";
 
         }
 

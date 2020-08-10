@@ -109,7 +109,7 @@ namespace BayViewUIAutomation.CommonLibs
             }
         }
 
-        public void ResultOfProjectId(int rowId, string result, string projectId)
+        public void ResultOfProjectId(int rowId, string executionStatus, string _result, string projectId)
         {
 
 //if (File.Exists(CsvFilePath))
@@ -117,18 +117,18 @@ namespace BayViewUIAutomation.CommonLibs
   //              List<string> lines = File.ReadAllLines(CsvFilePath).ToList();
 
                 //string result = "Pass";
-                if (result.Equals("Pass"))
-                {
+                //if (executionStatus.Equals("Pass"))
+                //{
                     //CsvFile.Append();
-                    CsvFile.Append($"{projectId},{"Passed"},{Environment.NewLine}");
+                    CsvFile.Append($"{projectId},{executionStatus},{_result},{Environment.NewLine}");
                     File.WriteAllText(CsvFilePath, CsvFile.ToString());
-                }
-                else if (result.Equals("Fail"))
-                {
-                    CsvFile.Append($"{projectId},{"Failed"}");
-                    File.WriteAllText(CsvFilePath, CsvFile.ToString());
-                }
-            }
- //       }
+                //}
+                //else if (executionStatus.Equals("Fail"))
+                //{
+                //    CsvFile.Append($"{projectId},{"Failed"},{_result}");
+                //    File.WriteAllText(CsvFilePath, CsvFile.ToString());
+                //}
+         //   }
+       }
     }
 }

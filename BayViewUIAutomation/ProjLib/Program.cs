@@ -20,6 +20,7 @@ namespace BayViewUIAutomation.ProjLib
             GetExcelData getExcelData = new GetExcelData();
             var projectIdList = getExcelData.GetProjectIdList(1, "ProjectId");
             var pro = projectIdList.ToString().Split(',');
+            
 
 
             //Delete existing csv result file
@@ -28,12 +29,15 @@ namespace BayViewUIAutomation.ProjLib
             //Login to application
             xq2.LoginToApplication();
 
+            var rowId = 1;
             //Building & Doors flow
             foreach (string projectId in pro)
             {
                 Thread.Sleep(3000);
                 ObjectRepo.Driver.Url = "http://xq-test.azurewebsites.net/" + "#!/project/" + projectId;
                 var emptyBid = "";
+                var _result = "";
+                var executionStatus = "";
                 Thread.Sleep(10000);
 
                 //Check Bid is present or not
@@ -45,7 +49,7 @@ namespace BayViewUIAutomation.ProjLib
                     emptyBid = ObjectRepo.Driver.FindElement(byNoBid).Text.Trim();
                 }
 
-                var emptyBidString = ("There are no current bids for selected customer.").Trim();
+                var emptyBidString = ("              There are no current bids for selected customer.        ").Trim();
                 if (emptyBid != emptyBidString)
                 {
                     var noOfBids =
@@ -82,10 +86,18 @@ namespace BayViewUIAutomation.ProjLib
                                             By.XPath(
                                                 "//div[@ng-click=\'checkAndCollapseProjectDetails(building.isOpen)\']" +
                                                 iModIndex + "//a");
-                                        projNavigation.ProjBuildingFlow(modElement);
+                                        executionStatus = projNavigation.ProjBuildingFlow(modElement);
+                                        if (executionStatus != "Passed")
+                                        {
+                                            _result = executionStatus;
+                                        }
                                     }
 
-                                    projNavigation.ProjDoorsFlow();
+                                    executionStatus = projNavigation.ProjDoorsFlow();
+                                    if (executionStatus != "Passed")
+                                    {
+                                        _result = executionStatus;
+                                    }
                                 }
                                 // Project Status = Quote or Sales Order
                                 else if (projStatus.Equals("Quote") || projStatus.Equals("Sales Order"))
@@ -94,27 +106,31 @@ namespace BayViewUIAutomation.ProjLib
                                     ObjectRepo.Driver
                                         .FindElement(By.XPath("//li[@select=\'tabSelected(bid)\'][" + iBid +
                                                               "]/a//div[contains(text(),\'Bid\')]")).Click();
-
-                                    
                                 }
                                 
                             }
-                            projNavigation.ViewReports();
+                            executionStatus = projNavigation.ViewReports();
+                            if (executionStatus != "Passed")
+                            {
+                                _result = executionStatus;
+                            }
                         }
-                    }
-                    else
-                    {
-                        //_result = "No Bid available";
-                    }
+                    } 
                 }
+                else
+                {
+                    executionStatus = "Passed";
+                    _result = emptyBidString;
+                }
+                getExcelData.ResultOfProjectId(rowId++, executionStatus, _result, projectId);
             }
 
             ObjectRepo.Driver.Quit();
 
-                for (int rowId = 0; rowId < pro.Length; rowId++)
-                {
-                    getExcelData.ResultOfProjectId(rowId + 1, "Pass", pro[rowId]);
-                }
+                //for (int rowId = 1; rowId < pro.Length; rowId++)
+                //{
+                //    getExcelData.ResultOfProjectId(rowId, "Pass", "Failedexception", pro[rowId]);
+                //}
             }
         }
     }
