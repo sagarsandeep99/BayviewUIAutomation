@@ -90,5 +90,36 @@ namespace BayViewUIAutomation.ActionClasses
             ObjectRepo.Driver.Quit();
         }
 
+        public static bool TryFindElement(By by, IWebElement element)
+        {
+            try
+            {
+                ObjectRepo.Driver.FindElement(by);
+            }
+            catch (NoSuchElementException)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public static bool IsElementVisible(IWebElement element)
+        {
+            return element.Displayed && element.Enabled;
+        }
+
+        public static bool IsElementDisplayedAndVisible (By by, IWebElement element)
+        {   
+            if (TryFindElement(by, element))
+            {
+                element = ObjectRepo.Driver.FindElement(by);
+                bool visible = IsElementVisible(element);
+                if (visible)
+                {
+                    return visible;
+                }
+            }
+           return false;
+        }
     }
 }
