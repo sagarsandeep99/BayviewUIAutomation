@@ -19,7 +19,8 @@ namespace BayViewUIAutomation.CommonLibs
         private static string _uploadFilePath = ConfigurationManager.AppSettings["UploadFilePath"];
         public static StringBuilder CsvFile = new StringBuilder();
         public static StringBuilder CellValue = new StringBuilder();
-        public static string CsvFilePath = "D:\\QA\\VSBayViewUIAutomation\\BayViewUIAutomation\\DataResources\\TestProjectIdResult.csv";
+        public static string CsvFilePath = "D:\\QA\\VSBayViewUIAutomation\\BayViewUIAutomation\\DataResources\\TestProjectIdResult_"+
+                                           DateTime.Now.ToString("yyyyMMddHHmmssfff") +".csv";
 
         //Get Excel sheet all cell values
         //public void GetExcelValues(int rowNumber, string sheetName)
@@ -109,7 +110,7 @@ namespace BayViewUIAutomation.CommonLibs
             }
         }
 
-        public void ResultOfProjectId(int rowId, string executionStatus, string _result, string projectId)
+        public void ResultOfProjectId(int rowId, string executionStatus, string _result, string projectId, string bidId)
         {
 
 //if (File.Exists(CsvFilePath))
@@ -120,7 +121,7 @@ namespace BayViewUIAutomation.CommonLibs
                 //if (executionStatus.Equals("Pass"))
                 //{
                     //CsvFile.Append();
-                    CsvFile.Append($"{projectId},{executionStatus},{_result},{Environment.NewLine}");
+                    CsvFile.Append($"{projectId},{bidId},{executionStatus},{_result},{Environment.NewLine}");
                     File.WriteAllText(CsvFilePath, CsvFile.ToString());
                 //}
                 //else if (executionStatus.Equals("Fail"))

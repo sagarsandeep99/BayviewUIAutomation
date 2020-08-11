@@ -57,16 +57,8 @@ namespace BayViewUIAutomation.ProjLib
         public string ProjDoorsFlow()
         {
             Thread.Sleep(10000);
-          //  By element = By.XPath("//span[text()=\'Doors\']/preceding-sibling::i");
+                ObjectRepo.Driver.FindElement(By.XPath("//span[contains(text(),\'Doors\')]/preceding-sibling::i")).Click();
 
-            //try
-            //{
-            //    UiActions.WebDriverWait(ObjectRepo.Driver, element, 30, "not found");
-            //}
-            //catch (NoSuchElementException)
-            //{
-                ObjectRepo.Driver.FindElement(By.XPath("//span[text()=\'Doors\']/preceding-sibling::i")).Click();
-                    // }
             try
             {
                 Thread.Sleep(10000);
@@ -119,15 +111,57 @@ namespace BayViewUIAutomation.ProjLib
                 Thread.Sleep(10000);
                 ObjectRepo.Driver.FindElement(By.XPath("//button[@id='quote-button']")).Click();
                 Thread.Sleep(10000);
-                ObjectRepo.Driver.FindElement(By.XPath("//li[@ng-click='generateMaterialList(bid)']/a")).Click();
-                Thread.Sleep(10000);
-                ObjectRepo.Driver.FindElement(By.XPath("//button[@ng-click='close()']")).Click();
-                Thread.Sleep(10000);
-                ObjectRepo.Driver.FindElement(By.XPath("//button[@id='quote-button']")).Click();
-                Thread.Sleep(10000);
-                ObjectRepo.Driver.FindElement(By.XPath("//li[@ng-click='getQuote(bid, false)']/a")).Click();
-                Thread.Sleep(10000);
-                ObjectRepo.Driver.FindElement(By.XPath("//button[@ng-click='close()']")).Click();
+                try
+                {
+                    ObjectRepo.Driver.FindElement(By.XPath("//li[@ng-click='generateMaterialList(bid)']/a")).Click();
+                    Thread.Sleep(10000);
+                    ObjectRepo.Driver.FindElement(By.XPath("//button[@ng-click='close()']")).Click();
+                    Thread.Sleep(10000);
+                    ObjectRepo.Driver.FindElement(By.XPath("//button[@id='quote-button']")).Click();
+                    Thread.Sleep(10000);
+                    ObjectRepo.Driver.FindElement(By.XPath("//li[@ng-click='getQuote(bid, false)']/a")).Click();
+                    Thread.Sleep(10000);
+                    ObjectRepo.Driver.FindElement(By.XPath("//button[@ng-click='close()']")).Click();
+                }
+                catch (NoSuchElementException e)
+                {
+                    bool moDisplayedAndVisible = UiActions.IsElementDisplayedAndVisible(By.XPath(
+                              "//div[@ng-click=\'checkAndCollapseProjectDetails(building.isOpen)\']//a"), null);
+                    bool additionalMaterialAvailable = UiActions.IsElementDisplayedAndVisible(By.XPath(
+                            "//div[@ng-click=\'checkAndCollapseProjectDetails(bid.isMiscOpen)\']//i[@class=\'glyphicon glyphicon-hand-down\']"),
+                        null);
+                    if (moDisplayedAndVisible)
+                    {
+                        ObjectRepo.Driver.FindElement(By.XPath("//span[@ng-if=\'building.errorMsgs\']")).Click();
+                        var buildingErrorMessage = ObjectRepo.Driver
+                            .FindElement(By.XPath("//span[@ng-if=\'building.errorMsgs\']/following-sibling::div//li"))
+                            .Text;
+                        failedException = "Building Error Message: " + buildingErrorMessage;
+                        return failedException;
+                    }
+                    if (additionalMaterialAvailable)
+                    {
+                        Thread.Sleep(10000);
+                        ObjectRepo.Driver.FindElement(By.XPath("//button[@id='quote-button']")).Click();
+                        Thread.Sleep(10000);
+                        ObjectRepo.Driver.FindElement(By.XPath("//li[@ng-click='getQuote(bid, false)']/a")).Click();
+                        Thread.Sleep(5000);
+                        var additionalMaterialsErrorMessage = ObjectRepo.Driver
+                            .FindElement(By.XPath("//div[@id=\'toast-container\']//button/following-sibling::div"))
+                            .Text;
+                        Thread.Sleep(5000);
+                        ObjectRepo.Driver.FindElement(By.XPath("//div[@id=\'toast-container\']//button")).Click();
+                        Thread.Sleep(5000);
+                        failedException = "Additional Materials Error Message: " 
+                                          + additionalMaterialsErrorMessage;
+                        return failedException;
+
+                    }
+
+                    
+
+                }
+            
             }
             catch (ArgumentNullException elementException)
             {
