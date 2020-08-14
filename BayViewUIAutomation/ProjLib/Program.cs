@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using BayViewUIAutomation.ActionClasses;
 using BayViewUIAutomation.CommonLibs;
@@ -9,8 +10,10 @@ namespace BayViewUIAutomation.ProjLib
 {
     public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
+            Stopwatch stopwatch = Stopwatch.StartNew(); //creates and start the instance of Stopwatch
+
             //Decleration
             Xq2PageSetup xq2 = new Xq2PageSetup();
             ProjBuildingAndDoorsNavigationFlowForDataMigration projNavigation =
@@ -20,11 +23,10 @@ namespace BayViewUIAutomation.ProjLib
             GetExcelData getExcelData = new GetExcelData();
             var projectIdList = getExcelData.GetProjectIdList(1, "ProjectId");
             var pro = projectIdList.ToString().Split(',');
-            
 
 
             //Delete existing csv result file
-           // getExcelData.DeleteFile();
+            // getExcelData.DeleteFile();
 
             //Login to application
             xq2.LoginToApplication();
@@ -33,104 +35,120 @@ namespace BayViewUIAutomation.ProjLib
             //Building & Doors flow
             foreach (string projectId in pro)
             {
-                Thread.Sleep(3000);
-                ObjectRepo.Driver.Url = "http://xq-test.azurewebsites.net/" + "#!/project/" + projectId;
                 var emptyBid = "";
                 var _result = "";
+                int iBid = 0;
                 var executionStatus = "";
-                Thread.Sleep(10000);
-
-                //Check Bid is present or not
-                By byNoBid = By.XPath("//div[@ng-if=\'pcBids.length == 0 && !addingBid\']");
-                bool elementDisplayedAndVisible = UiActions.IsElementDisplayedAndVisible(byNoBid, null);
-                if (elementDisplayedAndVisible)
+                try
                 {
+
                     Thread.Sleep(3000);
-                    emptyBid = ObjectRepo.Driver.FindElement(byNoBid).Text.Trim();
-                }
+                    ObjectRepo.Driver.Url = "http://xq-test.azurewebsites.net/" + "#!/project/" + projectId;
+                    Thread.Sleep(10000);
 
-                var emptyBidString = ("              There are no current bids for selected customer.        ").Trim();
-                if (emptyBid != emptyBidString)
-                {
-                    var noOfBids =
-                        ObjectRepo.Driver.FindElements(
-                            By.XPath("//li[@select=\'tabSelected(bid)\']/a//div[contains(text(),\'Bid\')]"));
-
-                    if (noOfBids.Count > 0)
+                    //Check Bid is present or not
+                    By byNoBid = By.XPath("//div[@ng-if=\'pcBids.length == 0 && !addingBid\']");
+                    bool elementDisplayedAndVisible = UiActions.IsElementDisplayedAndVisible(byNoBid, null);
+                    if (elementDisplayedAndVisible)
                     {
-                        for (int iBid = 1; iBid <= noOfBids.Count; iBid++)
+                        Thread.Sleep(3000);
+                        emptyBid = ObjectRepo.Driver.FindElement(byNoBid).Text.Trim();
+                    }
+
+                    var emptyBidString =
+                        ("              There are no current bids for selected customer.        ").Trim();
+                    if (emptyBid != emptyBidString)
+                    {
+                        var noOfBids =
+                            ObjectRepo.Driver.FindElements(
+                                By.XPath("//li[@select=\'tabSelected(bid)\']/a//div[contains(text(),\'Bid\')]"));
+
+                        if (noOfBids.Count > 0)
                         {
-                            Thread.Sleep(10000);
-                            ObjectRepo.Driver
-                                .FindElement(By.XPath("//li[@select=\'tabSelected(bid)\'][" + iBid +
-                                                      "]/a//div[contains(text(),\'Bid\')]")).Click();
-                            //var projStatus = ObjectRepo.Driver
-                            //    .FindElement(By.XPath("//li[@select=\'tabSelected(bid)\'][" + iBid + "]/a//span")).Text;
-
-                            // Project Status = Lead
-                            //if (projStatus.Equals("Lead"))
-                            //{
-                            //    Thread.Sleep(5000);
-                                
-                            //    var noOfMods = ObjectRepo.Driver.FindElements(
-                            //        By.XPath(
-                            //            "//div[@ng-click=\'checkAndCollapseProjectDetails(building.isOpen)\']//a"));
-
-                            //    bool moDisplayedAndVisible = UiActions.IsElementDisplayedAndVisible(By.XPath(
-                            //        "//div[@ng-click=\'checkAndCollapseProjectDetails(building.isOpen)\']//a"), null);
-                            //    if (moDisplayedAndVisible)
-                            //    {
-                            //        for (int iModIndex = 1; iModIndex <= noOfMods.Count; iModIndex++)
-                            //        {
-                            //            By modElement =
-                            //                By.XPath(
-                            //                    "//div[@ng-click=\'checkAndCollapseProjectDetails(building.isOpen)\'][" +
-                            //                    iModIndex + "]//a");
-                            //            executionStatus = projNavigation.ProjBuildingFlow(modElement);
-                            //            if (executionStatus != "Passed")
-                            //            {
-                            //                _result = executionStatus;
-                            //            }
-                            //        }
-
-                            //        executionStatus = projNavigation.ProjDoorsFlow();
-                            //        if (executionStatus != "Passed")
-                            //        {
-                            //            _result = executionStatus;
-                            //        }
-                            //    }
-                            //     //Project Status = Quote or Sales Order
-                            //    else if (projStatus.Equals("Quote") || projStatus.Equals("Sales Order"))
-                            //    {
-                            //        Thread.Sleep(5000);
-                            //    }
-                                
-                            //}
-                            executionStatus = projNavigation.ViewReports();
-                            if (executionStatus != "Passed")
+                            for (iBid = 1; iBid <= noOfBids.Count; iBid++)
                             {
-                                _result = executionStatus;
+                                Thread.Sleep(10000);
+                                ObjectRepo.Driver
+                                    .FindElement(By.XPath("//li[@select=\'tabSelected(bid)\'][" + iBid +
+                                                          "]/a//div[contains(text(),\'Bid\')]")).Click();
+                                //var projStatus = ObjectRepo.Driver
+                                //    .FindElement(By.XPath("//li[@select=\'tabSelected(bid)\'][" + iBid + "]/a//span")).Text;
+
+                                // Project Status = Lead
+                                //if (projStatus.Equals("Lead"))
+                                //{
+                                //    Thread.Sleep(5000);
+
+                                //    var noOfMods = ObjectRepo.Driver.FindElements(
+                                //        By.XPath(
+                                //            "//div[@ng-click=\'checkAndCollapseProjectDetails(building.isOpen)\']//a"));
+
+                                //    bool moDisplayedAndVisible = UiActions.IsElementDisplayedAndVisible(By.XPath(
+                                //        "//div[@ng-click=\'checkAndCollapseProjectDetails(building.isOpen)\']//a"), null);
+                                //    if (moDisplayedAndVisible)
+                                //    {
+                                //        for (int iModIndex = 1; iModIndex <= noOfMods.Count; iModIndex++)
+                                //        {
+                                //            By modElement =
+                                //                By.XPath(
+                                //                    "//div[@ng-click=\'checkAndCollapseProjectDetails(building.isOpen)\'][" +
+                                //                    iModIndex + "]//a");
+                                //            executionStatus = projNavigation.ProjBuildingFlow(modElement);
+                                //            if (executionStatus != "Passed")
+                                //            {
+                                //                _result = executionStatus;
+                                //            }
+                                //        }
+
+                                //        executionStatus = projNavigation.ProjDoorsFlow();
+                                //        if (executionStatus != "Passed")
+                                //        {
+                                //            _result = executionStatus;
+                                //        }
+                                //    }
+                                //     //Project Status = Quote or Sales Order
+                                //    else if (projStatus.Equals("Quote") || projStatus.Equals("Sales Order"))
+                                //    {
+                                //        Thread.Sleep(5000);
+                                //    }
+
+                                //}
+                                executionStatus = projNavigation.ViewReports();
+                                if (executionStatus != "Passed")
+                                {
+                                    _result = executionStatus;
+                                }
+
+                                getExcelData.ResultOfProjectId(rowId++, executionStatus, _result, projectId,
+                                    "Bid[" + iBid + "]");
                             }
-                            getExcelData.ResultOfProjectId(rowId++, executionStatus, _result, projectId, "Bid[" + iBid +"]");
+
                         }
-                        
-                    } 
+                    }
+                    else
+                    {
+                        executionStatus = "Passed";
+                        _result = emptyBidString;
+                        getExcelData.ResultOfProjectId(rowId++, executionStatus, _result, projectId, "No Bid");
+                    }
                 }
-                else
+                catch (Exception)
                 {
-                    executionStatus = "Passed";
-                    _result = emptyBidString;
-                    getExcelData.ResultOfProjectId(rowId++, executionStatus, _result, projectId, "No Bid");
+                    getExcelData.ResultOfProjectId(rowId++, "Project Loading Failed", _result, projectId,
+                        "Bid[" + iBid + "]");
                 }
-                
-            }
+            }      
 
-            ObjectRepo.Driver.Quit();
+    ObjectRepo.Driver.Quit();
+            Thread.Sleep(5000);
+            stopwatch.Stop();
+            Console.WriteLine(stopwatch.ElapsedMilliseconds);
+            getExcelData.ResultOfProjectId(rowId++, "Time Taken", stopwatch.ElapsedMilliseconds.ToString(), stopwatch.Elapsed.TotalMinutes.ToString(), "Total Execution Time");
 
-                //for (int rowId = 1; rowId < pro.Length; rowId++)
-                //{
-                //    getExcelData.ResultOfProjectId(rowId, "Pass", "Failedexception", pro[rowId]);
-                //}
-            }
+            //for (int rowId = 1; rowId < pro.Length; rowId++)
+            //{
+            //    getExcelData.ResultOfProjectId(rowId, "Pass", "Failedexception", pro[rowId]);
+            //}
         }
     }
+}

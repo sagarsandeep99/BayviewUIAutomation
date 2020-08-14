@@ -145,7 +145,7 @@ namespace BayViewUIAutomation.ProjLib
                         ObjectRepo.Driver.FindElement(By.XPath("//button[@id='quote-button']")).Click();
                         Thread.Sleep(10000);
                         ObjectRepo.Driver.FindElement(By.XPath("//li[@ng-click='getQuote(bid, false)']/a")).Click();
-                        Thread.Sleep(5000);
+                        Thread.Sleep(10000);
                         var additionalMaterialsErrorMessage = ObjectRepo.Driver
                             .FindElement(By.XPath("//div[@id=\'toast-container\']//button/following-sibling::div"))
                             .Text;
@@ -156,9 +156,7 @@ namespace BayViewUIAutomation.ProjLib
                                           + additionalMaterialsErrorMessage;
                         return failedException;
 
-                    }
-
-                    
+                    }                    
 
                 }
             
@@ -166,17 +164,17 @@ namespace BayViewUIAutomation.ProjLib
             catch (ArgumentNullException elementException)
             {
                 Console.WriteLine(elementException);
-                throw;
+                return "Failed"; ;
             }
             catch (NoSuchElementException elementException)
             {
                 Console.WriteLine(elementException);
-                throw;
+                return "Failed"; ;
             }
             catch (Exception e)
             {
                 failedException = "Fail" + e;
-                return failedException;
+                return "Failed";
             }
 
             return "Passed";
