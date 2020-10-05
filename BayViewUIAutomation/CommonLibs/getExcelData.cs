@@ -110,7 +110,8 @@ namespace BayViewUIAutomation.CommonLibs
             }
         }
 
-        public void ResultOfProjectId(int rowId, string executionStatus, string _result, string projectId, string bidId)
+        //public void ResultOfProjectId(string executionStatus, string _result, string projectId, string xqOneProjectId, string bidId)
+        public void ResultOfProjectId(string executionStatus, string _result, string projectId, string bidId)
         {
 
 //if (File.Exists(CsvFilePath))

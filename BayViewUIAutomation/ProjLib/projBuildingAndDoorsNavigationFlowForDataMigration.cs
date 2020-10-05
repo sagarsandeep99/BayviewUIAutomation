@@ -108,19 +108,19 @@ namespace BayViewUIAutomation.ProjLib
         {
             try
             {
-                Thread.Sleep(10000);
+                Thread.Sleep(5000);
                 ObjectRepo.Driver.FindElement(By.XPath("//button[@id='quote-button']")).Click();
-                Thread.Sleep(10000);
+                Thread.Sleep(7000);
                 try
                 {
                     ObjectRepo.Driver.FindElement(By.XPath("//li[@ng-click='generateMaterialList(bid)']/a")).Click();
-                    Thread.Sleep(10000);
+                    Thread.Sleep(15000);
                     ObjectRepo.Driver.FindElement(By.XPath("//button[@ng-click='close()']")).Click();
-                    Thread.Sleep(10000);
+                    Thread.Sleep(15000);
                     ObjectRepo.Driver.FindElement(By.XPath("//button[@id='quote-button']")).Click();
-                    Thread.Sleep(10000);
+                    Thread.Sleep(15000);
                     ObjectRepo.Driver.FindElement(By.XPath("//li[@ng-click='getQuote(bid, false)']/a")).Click();
-                    Thread.Sleep(10000);
+                    Thread.Sleep(15000);
                     ObjectRepo.Driver.FindElement(By.XPath("//button[@ng-click='close()']")).Click();
                 }
                 catch (NoSuchElementException e)

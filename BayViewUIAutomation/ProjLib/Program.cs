@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 using System.Threading;
 using BayViewUIAutomation.ActionClasses;
 using BayViewUIAutomation.CommonLibs;
@@ -31,20 +32,29 @@ namespace BayViewUIAutomation.ProjLib
             //Login to application
             xq2.LoginToApplication();
 
-            var rowId = 1;
+            //var rowId = 1;
             //Building & Doors flow
-            foreach (string projectId in pro)
+            for (int projectIndex = 0; projectIndex < pro.Length-1; projectIndex++)
             {
                 var emptyBid = "";
                 var _result = "";
                 int iBid = 0;
                 var executionStatus = "";
+                var xqOneProjectId = "";
+                var projectId = pro[projectIndex];
                 try
                 {
 
                     Thread.Sleep(3000);
-                    ObjectRepo.Driver.Url = "http://xq-test.azurewebsites.net/" + "#!/project/" + projectId;
+                    ObjectRepo.Driver.Url = "http://xq-perf.azurewebsites.net/" + "#!/project/" + projectId;
                     Thread.Sleep(10000);
+
+                    //Get XQ1 Project number
+                    //var migratedProjectText = ObjectRepo.Driver
+                    //    .FindElement(By.XPath("//div[@ng-if=\'project.dataMigrationLogId\']")).Text;
+                    //var firstMigratedProjectText = migratedProjectText.Split('#');
+                    //var secondMigratedProjectText = firstMigratedProjectText[1].Split(',');
+                    //xqOneProjectId = secondMigratedProjectText[0].Trim();
 
                     //Check Bid is present or not
                     By byNoBid = By.XPath("//div[@ng-if=\'pcBids.length == 0 && !addingBid\']");
@@ -67,7 +77,7 @@ namespace BayViewUIAutomation.ProjLib
                         {
                             for (iBid = 1; iBid <= noOfBids.Count; iBid++)
                             {
-                                Thread.Sleep(10000);
+                                Thread.Sleep(7000);
                                 ObjectRepo.Driver
                                     .FindElement(By.XPath("//li[@select=\'tabSelected(bid)\'][" + iBid +
                                                           "]/a//div[contains(text(),\'Bid\')]")).Click();
@@ -119,7 +129,9 @@ namespace BayViewUIAutomation.ProjLib
                                     _result = executionStatus;
                                 }
 
-                                getExcelData.ResultOfProjectId(rowId++, executionStatus, _result, projectId,
+                                //getExcelData.ResultOfProjectId(executionStatus, _result, projectId, xqOneProjectId,
+                                 //   "Bid[" + iBid + "]");
+                                getExcelData.ResultOfProjectId(executionStatus, _result, projectId,
                                     "Bid[" + iBid + "]");
                             }
 
@@ -129,12 +141,15 @@ namespace BayViewUIAutomation.ProjLib
                     {
                         executionStatus = "Passed";
                         _result = emptyBidString;
-                        getExcelData.ResultOfProjectId(rowId++, executionStatus, _result, projectId, "No Bid");
+                        //getExcelData.ResultOfProjectId(executionStatus, _result, projectId, xqOneProjectId, "No Bid");
+                        getExcelData.ResultOfProjectId(executionStatus, _result, projectId, "No Bid");
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    getExcelData.ResultOfProjectId(rowId++, "Project Loading Failed", _result, projectId,
+                    //getExcelData.ResultOfProjectId("Project Loading Failed", _result, projectId, xqOneProjectId,
+                     //   "Bid[" + iBid + "]");
+                    getExcelData.ResultOfProjectId("Project Loading Failed", _result, projectId,
                         "Bid[" + iBid + "]");
                 }
             }      
@@ -143,7 +158,8 @@ namespace BayViewUIAutomation.ProjLib
             Thread.Sleep(5000);
             stopwatch.Stop();
             Console.WriteLine(stopwatch.ElapsedMilliseconds);
-            getExcelData.ResultOfProjectId(rowId++, "Time Taken", stopwatch.ElapsedMilliseconds.ToString(), stopwatch.Elapsed.TotalMinutes.ToString(), "Total Execution Time");
+            //getExcelData.ResultOfProjectId("", "", stopwatch.Elapsed.TotalMinutes.ToString(),"", "Total Execution Time in minutes");
+            getExcelData.ResultOfProjectId("", "", stopwatch.Elapsed.TotalMinutes.ToString(), "Total Execution Time in minutes");
 
             //for (int rowId = 1; rowId < pro.Length; rowId++)
             //{

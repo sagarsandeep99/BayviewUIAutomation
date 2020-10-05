@@ -22,7 +22,7 @@ namespace BayViewUIAutomation.ProjLib
 
 
 
-            ObjectRepo.Driver.Url = "http://xq-test.azurewebsites.net/";
+            ObjectRepo.Driver.Url = "http://xq-perf.azurewebsites.net/";
             ObjectRepo.Driver.Manage().Window.Maximize();
 
             Thread.Sleep(5000);
